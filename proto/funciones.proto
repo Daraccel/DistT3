@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package grpc;
+
+option go_package = "github.com/Daraccel/DistT3";
+
+message informante_broker {
+    string accion           = 1;
+    string planeta_afectado = 2;
+    string ciudad_afectada  = 3;
+    string nuevo_valor      = 4;
+}
+
+message broker_informante {
+    string direccion = 1;
+}
+
+// message informante_servidor
+// strings accion, planeta_afectado, ciudad_afectada, Nuevo_Valor
+message informante_servidor {
+    string accion           = 1;
+    string planeta_afectado = 2;
+    string ciudad_afectada  = 3;
+    string nuevo_valor      = 4;    
+}
+
+
+// message servidor_informante
+// ints x, y, z
+message servidor_informante {
+    int32 x = 1;
+    int32 y = 2;
+    int32 z = 3; 
+}
+
+service FuncionesService {
+    rpc inf_bro(informante_broker) returns (broker_informante);
+    rpc inf_serv(informante_servidor) returns (servidor_informante);
+}

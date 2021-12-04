@@ -1,10 +1,10 @@
 package main 
 
 
-import {
+import (
 	pb "github.com/Daraccel/DistT3/proto"
 	"google.golang.org/grpc"
-}
+)
 
 type server struct{
 	pb.UnimplementedFuncionesServiceServer

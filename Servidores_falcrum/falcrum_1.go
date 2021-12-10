@@ -17,7 +17,19 @@ import (
 	"google.golang.org/grpc"
 )
 
-var conn = ":50052"
+// coord de servidor
+var conn 	= ":50052"
+
+// var para vector coord a sumar en planeta-lugar modificado 
+var c_x int32	= 1
+var c_y int32	= 0
+var c_z	int32	= 0
+
+type coords struct {
+	coor_x,coor_y,coor_z int32
+}
+
+var mapeo_plan_coord map[string]coords
 
 type server struct{
 	pb.UnimplementedFuncionesServiceServer
@@ -187,10 +199,26 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 		}
 
 	}
+
+	// agregar a map con key nombre planeta
+	mapeo_plan_coord = make(map[string]coords)
+
+	coordenadas, ok := mapeo_plan_coord[planeta]
+
+	if ok {
+		nuevo_x := coordenadas.coor_x + c_x
+		nuevo_y := coordenadas.coor_y + c_y
+		nuevo_z := coordenadas.coor_y + c_z
+		mapeo_plan_coord[planeta] = coords{nuevo_x,nuevo_y,nuevo_z}
+	} else{
+		mapeo_plan_coord[planeta] = coords{c_x,c_y,c_z}
+	}
+	fmt.Println()
+
 	return &pb.ServidorInformante{
-		X: 1,
-		Y: 1,
-		Z: 1,
+		X: mapeo_plan_coord[planeta].coor_x,
+		Y: mapeo_plan_coord[planeta].coor_y,
+		Z: mapeo_plan_coord[planeta].coor_z,
 	}, nil
 }
 

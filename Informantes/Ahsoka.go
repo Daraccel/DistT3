@@ -53,7 +53,8 @@ func main() {
 		panic("No se pudo conectar con el servidor " + err.Error())
 	}
 
-	serviceClient := pb.NewFuncionesServiceClient(conn1)
+	// serviceClient := pb.NewFuncionesServiceClient(conn1)
+	serviceClient := pb.NewFuncionesServiceClient(":50052")
 	a1,a2,a3,a4 := menu()
 
 	res,err := serviceClient.InfBro(context.Background(), &pb.InformanteBroker{

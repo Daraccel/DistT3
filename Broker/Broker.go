@@ -26,18 +26,19 @@ func server_random() string {
 		rand.Seed(time.Now().UnixNano())
 	})
 
-	var num int
+	// var num int
 	var str string
-	num = rand.Intn(3) + 1
+	// num = rand.Intn(3) + 1
 	// log.Println(num)
-	switch {
-	case num == 1:
-		str = ":50052"
-	case num == 2:
-		str = ":50053"
-	case num == 3:
-		str = ":50054"
-	}
+	// switch {
+	// case num == 1:
+	// 	str = ":50052"
+	// case num == 2:
+	// 	str = ":50053"
+	// case num == 3:
+	// 	str = ":50054"
+	// }
+	str = ":50052"
 	return str
 }
 

@@ -40,7 +40,7 @@ func menu() (string, string, string, string) {
 		accion_str4 = "0"
 	} else {
 		fmt.Println("Ingrese nuevo valor:")
-		fmt.Scan(&accion_str2)
+		fmt.Scan(&accion_str4)
 	}
 
 	return accion_str1, accion_str2, accion_str3, accion_str4
@@ -52,9 +52,8 @@ func main() {
 	if err!= nil {
 		panic("No se pudo conectar con el servidor " + err.Error())
 	}
-
-	// serviceClient := pb.NewFuncionesServiceClient(conn1)
-	serviceClient := pb.NewFuncionesServiceClient(":50052")
+	
+	serviceClient := pb.NewFuncionesServiceClient(conn1)
 	a1,a2,a3,a4 := menu()
 
 	res,err := serviceClient.InfBro(context.Background(), &pb.InformanteBroker{

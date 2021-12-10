@@ -138,6 +138,13 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 	val		:= req.NuevoValor
 
 	nom := planeta + ".txt"
+
+	fmt.Println("Nom: " + nom)
+	fmt.Println("Accion: " + accion)
+	fmt.Println("planeta: " + planeta)
+	fmt.Println("ciudad: " + ciudad)
+	fmt.Println("val: " + val)
+
 	
 
 	if accion == "AddCity"{
@@ -201,16 +208,24 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 	}
 
 	// agregar a map con key nombre planeta
-	mapeo_plan_coord = make(map[string]coords)
 
 	coordenadas, ok := mapeo_plan_coord[planeta]
 
 	if ok {
+		fmt.Println("Ok: TRUE")
+		fmt.Println(coordenadas.coor_x)
+		fmt.Println(coordenadas.coor_y)
+		fmt.Println(coordenadas.coor_z)
 		nuevo_x := coordenadas.coor_x + c_x
 		nuevo_y := coordenadas.coor_y + c_y
 		nuevo_z := coordenadas.coor_y + c_z
 		mapeo_plan_coord[planeta] = coords{nuevo_x,nuevo_y,nuevo_z}
 	} else{
+		fmt.Println("creano map")
+		fmt.Println(c_x)
+		fmt.Println(c_y)
+		fmt.Println(c_z)
+
 		mapeo_plan_coord[planeta] = coords{c_x,c_y,c_z}
 	}
 	fmt.Println()
@@ -223,6 +238,8 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 }
 
 func main() {
+	mapeo_plan_coord = make(map[string]coords)
+
 	listner, err := net.Listen("tcp",conn)
 	
 	if err != nil {

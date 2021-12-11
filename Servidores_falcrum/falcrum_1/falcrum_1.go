@@ -137,7 +137,12 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 	ciudad	:= req.CiudadAfectada
 	val		:= req.NuevoValor
 
-	nom := planeta + ".txt"
+	nom 	:= planeta + ".txt"
+	nom2 	:= "registro_" + planeta + ".txt"
+	str 	:= planeta + " " + ciudad + " " + val
+	str2 	:= accion + " " + planeta + " " + ciudad + " " + val
+
+	
 
 	fmt.Println("Nom: " + nom)
 	fmt.Println("Accion: " + accion)
@@ -146,10 +151,10 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 	fmt.Println("val: " + val)
 
 	
-
+	///////////-----Seccion de archivos de planetas-----///////////
 	if accion == "AddCity"{
 		//chequear si existe archivo y anidir linea
-		str := planeta + " " + ciudad + " " + val
+		
 		if _, err := os.Stat(nom); err == nil {
 			fmt.Println("Archivo existe, creando...")
 			
@@ -206,6 +211,21 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 		}
 
 	}
+	///////////-----------------------------------------///////////
+
+	///////////-----Seccion de registros de planetas----///////////
+	if _, err := os.Stat(nom2); err == nil {
+		fmt.Println("Archivo existe, creando...")
+		
+		append_line_archivo(nom2, str2)
+	} else if err !=  nil{
+		fmt.Println("No se encontro archivo, creando...")
+		crear_archivo(nom2)
+		append_line_archivo(nom2, str2)
+	} else {
+		fmt.Println("Error en el archivo a escribir")
+	}
+	///////////-----------------------------------------///////////
 
 	// agregar a map con key nombre planeta
 

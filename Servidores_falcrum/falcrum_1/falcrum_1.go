@@ -129,8 +129,32 @@ func camb_nomb(val string, buscar string, nombre string) {
 	}
 }
 
+func (s *server) Inf_BroServCoord(ctx context.Context, req *pb.BrokerServidorCoord) (*pb.ServidorBrokerCoord, error){
+	var nuevo_x,nuevo_y,nuevo_z int32
+	
+	coordenadas, ok := mapeo_plan_coord[req.Planeta]
 
-// Por modificar esto, x,y,z es por archivo y aumenta con cada uso
+	if ok {
+		fmt.Println("Ok: TRUE")
+		nuevo_x = coordenadas.coor_x
+		nuevo_y = coordenadas.coor_y
+		nuevo_z = coordenadas.coor_y
+	} else{
+		fmt.Println("creano map")
+		nuevo_x = 0
+		nuevo_y = 0
+		nuevo_z = 0
+	}
+	
+	return &pb.ServidorBrokerCoord{
+		X: nuevo_x,
+		Y: nuevo_y,
+		Z: nuevo_z,
+	}, nil
+}
+
+
+
 func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.ServidorInformante, error){
 	accion 	:= req.Accion
 	planeta := req.PlanetaAfectado
@@ -248,7 +272,7 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 
 		mapeo_plan_coord[planeta] = coords{c_x,c_y,c_z}
 	}
-	fmt.Println()
+	// fmt.Println()
 
 	return &pb.ServidorInformante{
 		X: mapeo_plan_coord[planeta].coor_x,

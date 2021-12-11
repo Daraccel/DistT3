@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type FuncionesServiceClient interface {
 	InfBro(ctx context.Context, in *InformanteBroker, opts ...grpc.CallOption) (*BrokerInformante, error)
 	InfServ(ctx context.Context, in *InformanteServidor, opts ...grpc.CallOption) (*ServidorInformante, error)
+	Inf_BroServCoord(ctx context.Context, in *BrokerServidorCoord, opts ...grpc.CallOption) (*ServidorBrokerCoord, error)
 }
 
 type funcionesServiceClient struct {
@@ -48,12 +49,22 @@ func (c *funcionesServiceClient) InfServ(ctx context.Context, in *InformanteServ
 	return out, nil
 }
 
+func (c *funcionesServiceClient) Inf_BroServCoord(ctx context.Context, in *BrokerServidorCoord, opts ...grpc.CallOption) (*ServidorBrokerCoord, error) {
+	out := new(ServidorBrokerCoord)
+	err := c.cc.Invoke(ctx, "/grpc.FuncionesService/inf_BroServCoord", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FuncionesServiceServer is the server API for FuncionesService service.
 // All implementations must embed UnimplementedFuncionesServiceServer
 // for forward compatibility
 type FuncionesServiceServer interface {
 	InfBro(context.Context, *InformanteBroker) (*BrokerInformante, error)
 	InfServ(context.Context, *InformanteServidor) (*ServidorInformante, error)
+	Inf_BroServCoord(context.Context, *BrokerServidorCoord) (*ServidorBrokerCoord, error)
 	mustEmbedUnimplementedFuncionesServiceServer()
 }
 
@@ -66,6 +77,9 @@ func (UnimplementedFuncionesServiceServer) InfBro(context.Context, *InformanteBr
 }
 func (UnimplementedFuncionesServiceServer) InfServ(context.Context, *InformanteServidor) (*ServidorInformante, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InfServ not implemented")
+}
+func (UnimplementedFuncionesServiceServer) Inf_BroServCoord(context.Context, *BrokerServidorCoord) (*ServidorBrokerCoord, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Inf_BroServCoord not implemented")
 }
 func (UnimplementedFuncionesServiceServer) mustEmbedUnimplementedFuncionesServiceServer() {}
 
@@ -116,6 +130,24 @@ func _FuncionesService_InfServ_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FuncionesService_Inf_BroServCoord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BrokerServidorCoord)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FuncionesServiceServer).Inf_BroServCoord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.FuncionesService/inf_BroServCoord",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FuncionesServiceServer).Inf_BroServCoord(ctx, req.(*BrokerServidorCoord))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FuncionesService_ServiceDesc is the grpc.ServiceDesc for FuncionesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,6 +162,10 @@ var FuncionesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "inf_serv",
 			Handler:    _FuncionesService_InfServ_Handler,
+		},
+		{
+			MethodName: "inf_BroServCoord",
+			Handler:    _FuncionesService_Inf_BroServCoord_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

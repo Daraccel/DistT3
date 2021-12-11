@@ -9,6 +9,9 @@ message informante_broker {
     string planeta_afectado = 2;
     string ciudad_afectada  = 3;
     string nuevo_valor      = 4;
+    int32 x                 = 5;
+    int32 y                 = 6;
+    int32 z                 = 7;
 }
 
 message broker_informante {
@@ -33,7 +36,17 @@ message servidor_informante {
     int32 z = 3; 
 }
 
+message broker_servidor_coord {
+    string planeta = 1; 
+}
+message servidor_broker_coord {
+    int32 x = 1;
+    int32 y = 2;
+    int32 z = 3; 
+}
+
 service FuncionesService {
     rpc inf_bro(informante_broker) returns (broker_informante);
     rpc inf_serv(informante_servidor) returns (servidor_informante);
+    rpc inf_BroServCoord(broker_servidor_coord) returns (servidor_broker_coord);
 }

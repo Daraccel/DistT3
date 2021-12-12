@@ -19,7 +19,6 @@ message broker_informante {
 }
 
 // message informante_servidor
-// strings accion, planeta_afectado, ciudad_afectada, Nuevo_Valor
 message informante_servidor {
     string accion           = 1;
     string planeta_afectado = 2;
@@ -39,14 +38,43 @@ message servidor_informante {
 message broker_servidor_coord {
     string planeta = 1; 
 }
+
 message servidor_broker_coord {
     int32 x = 1;
     int32 y = 2;
+    int32 z = 3;
+}
+
+message leia_broker {
+    string planeta   = 1;
+    string ciudad    = 2;
+}
+
+message broker_leia {
+    string rebeldes  =1;
+    int32 x = 2;
+    int32 y = 3;
+    int32 z = 4;
+    string sfulcrum = 5;
+}
+
+message broker_fulcrum{ 
+    string nombreplaneta = 1;
+    string nombreciudad  = 2;   
+}
+
+message fulcrum_broker {
+    int32 x = 1;
+    int32 y = 2;
     int32 z = 3; 
+    int32 rebeldes = 4;
+    string nombreserver = 5;
 }
 
 service FuncionesService {
     rpc inf_bro(informante_broker) returns (broker_informante);
     rpc inf_serv(informante_servidor) returns (servidor_informante);
     rpc inf_BroServCoord(broker_servidor_coord) returns (servidor_broker_coord);
+    rpc inf_brolei(leia_broker) returns (broker_leia);
+    rpc inf_broful(broker_fulcrum) returns (fulcrum_broker);
 }

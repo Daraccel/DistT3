@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"context"
+	"fmt"
 
 	pb "github.com/Daraccel/DistT3/proto"
 	"google.golang.org/grpc"

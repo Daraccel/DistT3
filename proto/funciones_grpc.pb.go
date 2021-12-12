@@ -21,6 +21,8 @@ type FuncionesServiceClient interface {
 	InfBro(ctx context.Context, in *InformanteBroker, opts ...grpc.CallOption) (*BrokerInformante, error)
 	InfServ(ctx context.Context, in *InformanteServidor, opts ...grpc.CallOption) (*ServidorInformante, error)
 	Inf_BroServCoord(ctx context.Context, in *BrokerServidorCoord, opts ...grpc.CallOption) (*ServidorBrokerCoord, error)
+	InfBrolei(ctx context.Context, in *LeiaBroker, opts ...grpc.CallOption) (*BrokerLeia, error)
+	InfBroful(ctx context.Context, in *BrokerFulcrum, opts ...grpc.CallOption) (*FulcrumBroker, error)
 }
 
 type funcionesServiceClient struct {
@@ -58,6 +60,24 @@ func (c *funcionesServiceClient) Inf_BroServCoord(ctx context.Context, in *Broke
 	return out, nil
 }
 
+func (c *funcionesServiceClient) InfBrolei(ctx context.Context, in *LeiaBroker, opts ...grpc.CallOption) (*BrokerLeia, error) {
+	out := new(BrokerLeia)
+	err := c.cc.Invoke(ctx, "/grpc.FuncionesService/inf_brolei", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *funcionesServiceClient) InfBroful(ctx context.Context, in *BrokerFulcrum, opts ...grpc.CallOption) (*FulcrumBroker, error) {
+	out := new(FulcrumBroker)
+	err := c.cc.Invoke(ctx, "/grpc.FuncionesService/inf_broful", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FuncionesServiceServer is the server API for FuncionesService service.
 // All implementations must embed UnimplementedFuncionesServiceServer
 // for forward compatibility
@@ -65,6 +85,8 @@ type FuncionesServiceServer interface {
 	InfBro(context.Context, *InformanteBroker) (*BrokerInformante, error)
 	InfServ(context.Context, *InformanteServidor) (*ServidorInformante, error)
 	Inf_BroServCoord(context.Context, *BrokerServidorCoord) (*ServidorBrokerCoord, error)
+	InfBrolei(context.Context, *LeiaBroker) (*BrokerLeia, error)
+	InfBroful(context.Context, *BrokerFulcrum) (*FulcrumBroker, error)
 	mustEmbedUnimplementedFuncionesServiceServer()
 }
 
@@ -80,6 +102,12 @@ func (UnimplementedFuncionesServiceServer) InfServ(context.Context, *InformanteS
 }
 func (UnimplementedFuncionesServiceServer) Inf_BroServCoord(context.Context, *BrokerServidorCoord) (*ServidorBrokerCoord, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Inf_BroServCoord not implemented")
+}
+func (UnimplementedFuncionesServiceServer) InfBrolei(context.Context, *LeiaBroker) (*BrokerLeia, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InfBrolei not implemented")
+}
+func (UnimplementedFuncionesServiceServer) InfBroful(context.Context, *BrokerFulcrum) (*FulcrumBroker, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InfBroful not implemented")
 }
 func (UnimplementedFuncionesServiceServer) mustEmbedUnimplementedFuncionesServiceServer() {}
 
@@ -148,6 +176,42 @@ func _FuncionesService_Inf_BroServCoord_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FuncionesService_InfBrolei_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LeiaBroker)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FuncionesServiceServer).InfBrolei(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.FuncionesService/inf_brolei",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FuncionesServiceServer).InfBrolei(ctx, req.(*LeiaBroker))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FuncionesService_InfBroful_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BrokerFulcrum)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FuncionesServiceServer).InfBroful(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.FuncionesService/inf_broful",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FuncionesServiceServer).InfBroful(ctx, req.(*BrokerFulcrum))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FuncionesService_ServiceDesc is the grpc.ServiceDesc for FuncionesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -166,6 +230,14 @@ var FuncionesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "inf_BroServCoord",
 			Handler:    _FuncionesService_Inf_BroServCoord_Handler,
+		},
+		{
+			MethodName: "inf_brolei",
+			Handler:    _FuncionesService_InfBrolei_Handler,
+		},
+		{
+			MethodName: "inf_broful",
+			Handler:    _FuncionesService_InfBroful_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

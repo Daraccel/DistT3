@@ -56,8 +56,8 @@ func append_line_archivo(nombre string, nueva_linea string) {
 	fmt.Println("file append successesfully")
 }
 
+//cada vez que se corre esto, se crea el archivo vacio
 func crear_archivo(nombre string) {
-	//cada vez que se corre esto, se crea el archivo vacio
 	file, err := os.Create(nombre)
 	if err != nil {
 		fmt.Println(err)

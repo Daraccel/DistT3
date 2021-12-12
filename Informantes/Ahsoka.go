@@ -17,13 +17,13 @@ type registro struct {
 
 var mapeo_datos map[string]registro
 
-func menu() (string, string, string, string, bool) {
+func menu() (string, string, string, string, int) {
 	var accion_int int
 	var accion_str1 string
 	var accion_str2 string
 	var accion_str3 string
 	var accion_str4 string
-	var correr = true
+	var correr int = 1
 
 	fmt.Println("Ingrese numero de accion a realizar. \n 1: AddCity \n 2: UpdateName \n 3: UpdateNumber \n 4: DeleteCity \n 5: Cerrar programa")
 	fmt.Scan(&accion_int)
@@ -37,11 +37,10 @@ func menu() (string, string, string, string, bool) {
 	case accion_int == 4:
 		accion_str1 = "DeleteCity"
 	case accion_int == 5:
-		correr = false
+		correr = 2
 	}
 
-	if correr {
-	
+	if correr < 2{
 		fmt.Println("Ingrese nombre de planeta:")
 		fmt.Scan(&accion_str2)
 		
@@ -60,34 +59,34 @@ func menu() (string, string, string, string, bool) {
 
 func main() {
 	var valX,valY,valZ int32
+	var a1,a2,a3,a4 string
 
 	mapeo_datos= make(map[string]registro)
 
-	var correr = true
+	var correr int = 1
 
-	for correr {
+	for correr < 2 {
 		conn1, err := grpc.Dial(conn_brok, grpc.WithInsecure())
 		if err!= nil {
 			panic("No se pudo conectar con el servidor " + err.Error())
 		}
 
 		serviceClient := pb.NewFuncionesServiceClient(conn1)
-		a1,a2,a3,a4,correr := menu()
+		a1,a2,a3,a4,correr = menu()
 
-		datos_map, ok := mapeo_datos[a2]
-		if ok {
-			valX = datos_map.coor_x
-			valY = datos_map.coor_y
-			valZ = datos_map.coor_z
-		} else {
-			valX = 0
-			valY = 0
-			valZ = 0
-		}
+		if correr < 2 {
+			fmt.Println("correr es true")
+			datos_map, ok := mapeo_datos[a2]
+			if ok {
+				valX = datos_map.coor_x
+				valY = datos_map.coor_y
+				valZ = datos_map.coor_z
+			} else {
+				valX = 0
+				valY = 0
+				valZ = 0
+			}
 
-
-
-		if correr {
 			res,err := serviceClient.InfBro(context.Background(), &pb.InformanteBroker{
 				Accion:				a1,
 				PlanetaAfectado:	a2,

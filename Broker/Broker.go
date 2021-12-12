@@ -77,16 +77,16 @@ func (s *server) InfBro(ctx context.Context, req *pb.InformanteBroker) (*pb.Brok
 		map_random[cont] = dats{connS1}
 		cont ++
 	}
-	// x2,y2,z2 := con_serv(req.PlanetaAfectado,connS2)
-	// if and (x2 >= req.X) (y2 >= req.Y) (z2 >= req.Z){
-	// 	map_random[cont] = dats{connS2}
-	// 	cont ++
-	// }
-	// x3,y3,z3 := con_serv(req.PlanetaAfectado,connS3)
-	// if and (x3 >= req.X) (y3 >= req.Y) (z3 >= req.Z){
-	// 	map_random[cont] = dats{connS3}
-	// 	cont ++
-	// }
+	x2,y2,z2 := con_serv(req.PlanetaAfectado,connS2)
+	if (x2 >= req.X) && (y2 >= req.Y) && (z2 >= req.Z){
+		map_random[cont] = dats{connS2}
+		cont ++
+	}
+	x3,y3,z3 := con_serv(req.PlanetaAfectado,connS3)
+	if (x3 >= req.X) && (y3 >= req.Y) && (z3 >= req.Z){
+		map_random[cont] = dats{connS3}
+		cont ++
+	}
 
 	onlyOnce.Do(func(){
 		rand.Seed(time.Now().UnixNano())

@@ -22,9 +22,15 @@ func mensaje() (string, string) {
 	return n_planeta, n_ciudad
 }
 
+type infoplanet struct {
+	rebels              int32
+	cordx, cordy, cordz int32
+	server              string
+}
+
 func main() {
-					//nombreCIudad : rebeldes, reloj vectorial
-	visits := make(map[string][]string)
+	//nombreCIudad : rebeldes, reloj vectorial, server de la info
+	visits := make(map[string]infoplanet)
 
 	conn1, err := grpc.Dial(conn_brok, grpc.WithInsecure()) //Conecta con el server
 	if err != nil {
@@ -35,12 +41,10 @@ func main() {
 	//serviceClient := pb.NewFuncionesServiceClient(":50052")
 	p_name, p_siti := mensaje()
 
-	res, err: =serviceClient.InfBrolei(context.Background(), &pb.LeiaBroker{
-		Nombre:      p_name,
-		Ciudad :     p_siti,
-	}) 
-	
-	(*BrokerLeia, error)
+	res, err := serviceClient.InfBrolei(context.Background(), &pb.LeiaBroker{
+		Nombre: p_name,
+		Ciudad: p_siti,
+	})
 	//res, err := serviceClient.InfBro(context.Background(), &pb.InformanteBroker{ //Envía al broker todas las acciones y recibe una respuesta en res donde le llega la direccion	})
 	if err != nil {
 		panic("Error en mensaje de broker " + err.Error())

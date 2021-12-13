@@ -51,7 +51,7 @@ message leia_broker {
 }
 
 message broker_leia {
-    string rebeldes  =1;
+    int32 rebeldes  =1;
     int32 x = 2;
     int32 y = 3;
     int32 z = 4;

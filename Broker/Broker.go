@@ -23,6 +23,13 @@ type dats struct {
 	direc string
 }
 
+type infoplanet struct {
+	rebels              int32
+	cordx, cordy, cordz int32
+	server              string
+}
+
+var map_planet map[int]infoplanet
 var map_random map[int]dats
 
 type server struct {
@@ -67,9 +74,64 @@ func con_serv(planet string, dir string) (int32, int32, int32) {
 	return res.X, res.Y, res.Z
 }
 
-func (s *server) InfBro(ctx context.Context, req *pb.InformanteBroker) (*pb.BrokerInformante, error) {
-	map_random = make(map[int]dats)
+//Conexion fulcrum broker desde leia      //retorna rebeldes, reloj vectorial, serverName
+func con_servB(planet string, ciudad string) (int32, int32, int32, int32, string) {
+	conn1, err := grpc.Dial(ciudad, grpc.WithInsecure())
+	if err != nil {
+		panic("Fallo en la conexion con el server, esto debe ser Obra del Imperio" + err.Error())
+	}
+	serviceClient2 := pb.NewFuncionesServiceClient(conn1)
+
+	res, err := serviceClient2.InfBroful(context.Background(), &pb.BrokerFulcrum{
+		Nombreplaneta: planet,
+		Nombreciudad:  ciudad,
+	})
+
+	if err != nil {
+		panic("Error en mensaje de servidor, el imperio debe estar detras de esto " + err.Error())
+	}
+
+	return res.Rebeldes, res.X, res.Y, res.Z, res.Nombreserver
+}
+
+func (s *server) InfBrolei(ctx context.Context, req *pb.LeiaBroker) (*pb.BrokerLeia, error) {
+	map_planet = make(map[int]infoplanet)
 	cont := 0
+
+	rbls, x1, y1, z1, sername := con_servB(req.Planeta, req.Ciudad)
+	if (x1 != 0) && (y1 != 0) && (z1 != 0) {
+		map_planet[cont] = infoplanet{rbls, x1, y1, z1, sername}
+		cont++
+	}
+
+	rbls, x2, y2, z2, sername := con_servB(req.Planeta, req.Ciudad)
+	if (x2 != 0) && (y2 != 0) && (z2 != 0) {
+		map_planet[cont] = infoplanet{rbls, x2, y2, z2, sername}
+		cont++
+	}
+	rbls, x3, y3, z3, sername := con_servB(req.Planeta, req.Ciudad)
+	if (x3 != 0) && (y3 != 0) && (z3 != 0) {
+		map_planet[cont] = infoplanet{rbls, x3, y3, z3, sername}
+		cont++
+	}
+	onlyOnce.Do(func() {
+		rand.Seed(time.Now().UnixNano())
+	})
+	eleccion := rand.Intn(len(map_random))
+
+	return &pb.BrokerLeia{
+
+		Rebeldes: map_planet[eleccion].rebels,
+		X:        map_planet[eleccion].cordx,
+		Y:        map_planet[eleccion].cordy,
+		Z:        map_planet[eleccion].cordz,
+		Sfulcrum: map_planet[eleccion].server,
+	}, nil
+}
+
+func (s *server) InfBro(ctx context.Context, req *pb.InformanteBroker) (*pb.BrokerInformante, error) {
+	map_random = make(map[int]dats) //mapa temporal de esta parte
+	cont := 0                       //Contador
 
 	x1, y1, z1 := con_serv(req.PlanetaAfectado, connS1)
 	if (x1 >= req.X) && (y1 >= req.Y) && (z1 >= req.Z) {

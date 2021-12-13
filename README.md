@@ -2,15 +2,15 @@
 - -> realizado
 
 Servidores falcrum
-    * tienen los 3 los archivos
+    - tienen los 3 los archivos
         archivos:
             - Formato: Nombre_Planeta Nombre_Ciudad Cantidad_Soldados_Rebeldes
-            * almacenar segun planeta
+            - almacenar segun planeta
 
-    * cada servidor posee [x,y,z] por archivos
+    - cada servidor posee [x,y,z] por archivos
     
     *Log de registro con modificacion de registros
-        * Formato: accion planeta_afectado ciudad_afectada Nuevo_Valor
+        - Formato: accion planeta_afectado ciudad_afectada Nuevo_Valor
         * borrar y crear nuevo vacio 
     
     * Mantener consistencia eventual cada 2 min
@@ -29,7 +29,7 @@ Servidores falcrum
 * Informantes
     * acciones
         * AddCity nombre_planeta nombre_ciudad nuevo_valor
-            * No existe planeta -> se crea nuevo registro de planeta
+            - No existe planeta -> se crea nuevo registro de planeta
             * en caso de que no haya valor -> valor = 0
         
         - UpdateName nombre_planeta nombre_ciudad nuevo_valor
@@ -44,11 +44,11 @@ Servidores falcrum
         3- re-enviar mismo mensaje enviado a broker hacia fulcrum
         4- recivir reloj vector de archivo modificado
         
-    * modelo consistencia read your writes
+    - modelo consistencia read your writes
         con cada write, hay que hacer read al objeto 
     
-    * mantener en memoria informacion derlos registros planetarios modificados con su reloj vector y direccion servidor
-        archivo temporal? array/memoria compartida?
+    - mantener en memoria informacion de los registros planetarios modificados con su reloj vector y direccion servidor
+        creo que su buen map sirve, por
         
 * Leia Organa
     * consultas a broker para saber cantidad de rebeldes por ciudad en planeta
@@ -61,9 +61,8 @@ Servidores falcrum
     * informacion en memoria de ciudades que ha solicitado, reloj vectorial y servidor
 
 * Consistencia
-    * tener relojes vectores [x,y,z] en cada servidor por archivo
+    - tener relojes vectores [x,y,z] en cada servidor por archivo
         como guardarlos por archivo?
-            array de arrays con que guarda ubicacion y reloj vector? algo similar?
     
     * merge
         * definir nodo dominante
@@ -80,7 +79,7 @@ protoc --go_out=. --go_opt=paths=source_relative \
 funciones.proto
 
 problema:
-rotoc-gen-go: program not found or is not executable
+protoc-gen-go: program not found or is not executable
 solucion:
 sudo apt install protobuf-compiler
 sudo apt install golang-goprotobuf-dev

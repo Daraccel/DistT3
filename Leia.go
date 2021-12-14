@@ -23,14 +23,15 @@ func mensaje() (string, string) {
 }
 
 type infoplanet struct {
-	rebels              int32
-	cordx, cordy, cordz int32
-	server              string
+	city   string
+	rebels int32
+	corde  [3]int32
+	server string
 }
 
 func main() {
 	//nombreCIudad : rebeldes, reloj vectorial, server de la info
-	//	visits := make(map[string]infoplanet)
+	visits := make(map[string]infoplanet)
 
 	conn1, err := grpc.Dial(conn_brok, grpc.WithInsecure()) //Conecta con el server
 	if err != nil {
@@ -53,5 +54,9 @@ func main() {
 	fmt.Println("Rebeldes: ", res.Rebeldes)
 	fmt.Println("Cordenadas: ", res.X, res.Y, res.Z)
 	fmt.Println("Servidor usado: ", res.Sfulcrum)
+	algo := [3]int32{res.X, res.Y, res.Z}
+
+	p := infoplanet{city: p_siti, rebels: res.Rebeldes, corde: algo, server: res.Sfulcrum}
+	visits[p_name] = p
 
 }

@@ -134,7 +134,7 @@ func Up_numLei(buscar string, nombre string) (string, int32) {
 }
 
 func camb_nomb(val string, buscar string, nombre string) {
-	input, err := ioutil.ReadFile(nombre)
+	input, err := ioutil.ReadFile(nombre + ".txt")
 	if err != nil {
 		fmt.Println(err)
 		return

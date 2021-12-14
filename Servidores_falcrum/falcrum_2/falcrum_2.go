@@ -1,12 +1,13 @@
-package main 
-
+package main
 
 import (
-	"io/ioutil"
-	"strings"
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"strconv"
+	"strings"
+
 	// "log"
 	// "math/rand"
 	"net"
@@ -20,29 +21,37 @@ import (
 // coord de servidor
 var conn = ":50053"
 
-// var para vector coord a sumar en planeta-lugar modificado 
-var c_x int32	= 0
-var c_y int32	= 1
-var c_z	int32	= 0
+// var para vector coord a sumar en planeta-lugar modificado
+var c_x int32 = 0
+var c_y int32 = 1
+var c_z int32 = 0
 
 type coords struct {
-	coor_x,coor_y,coor_z int32
+	coor_x, coor_y, coor_z int32
 }
+
+type infoplanet struct {
+	rebels              int32
+	cordx, cordy, cordz int32
+	server              string
+}
+
+var mapa_citinfo map[string]infoplanet
 
 var mapeo_plan_coord map[string]coords
 
-type server struct{
+type server struct {
 	pb.UnimplementedFuncionesServiceServer
 }
 
 func append_line_archivo(nombre string, nueva_linea string) {
-	file,err := os.OpenFile(nombre, os.O_APPEND|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(nombre, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Println("err")
 		return
 	}
 
-	_, err = fmt.Fprintln(file,nueva_linea)
+	_, err = fmt.Fprintln(file, nueva_linea)
 	if err != nil {
 		fmt.Println("err")
 		file.Close()
@@ -65,7 +74,7 @@ func crear_archivo(nombre string) {
 		fmt.Println(file)
 		fmt.Println("File creada")
 	}
-	
+
 	err = file.Close()
 	if err != nil {
 		fmt.Println(err)
@@ -89,12 +98,39 @@ func Up_num(linea_nueva string, buscar string, nombre string) {
 		}
 	}
 
-	output := strings.Join(lines,"\n")
+	output := strings.Join(lines, "\n")
 	err = ioutil.WriteFile(nombre, []byte(output), 0644)
-	if err!= nil {
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
+}
+
+//                   ciudad        planeta
+func Up_numLei(buscar string, nombre string) (string, int32) {
+	input, err := ioutil.ReadFile(nombre)
+	if err != nil {
+		fmt.Println(err)
+		return "error", 0
+	}
+
+	lines := strings.Split(string(input), "\n")
+
+	for i, line := range lines {
+		if strings.Contains(line, buscar) {
+			este := strings.Split(lines[i], " ")
+			x, _ := strconv.Atoi(este[2])
+			return este[1], int32(x)
+		}
+	}
+
+	output := strings.Join(lines, "\n")
+	err = ioutil.WriteFile(nombre, []byte(output), 0644)
+	if err != nil {
+		fmt.Println(err)
+		return "error", 0
+	}
+	return "error", 0
 }
 
 func camb_nomb(val string, buscar string, nombre string) {
@@ -110,7 +146,7 @@ func camb_nomb(val string, buscar string, nombre string) {
 		if strings.Contains(line, buscar) {
 			fmt.Println(line)
 			lin := strings.Split(string(lines[i]), " ")
-			
+
 			for x, y := range lin {
 				if strings.Contains(y, buscar) {
 					lin[x] = val
@@ -121,17 +157,17 @@ func camb_nomb(val string, buscar string, nombre string) {
 		}
 	}
 
-	output := strings.Join(lines,"\n")
+	output := strings.Join(lines, "\n")
 	err = ioutil.WriteFile(nombre, []byte(output), 0644)
-	if err!= nil {
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
 }
 
-func (s *server) Inf_BroServCoord(ctx context.Context, req *pb.BrokerServidorCoord) (*pb.ServidorBrokerCoord, error){
-	var nuevo_x,nuevo_y,nuevo_z int32
-	
+func (s *server) Inf_BroServCoord(ctx context.Context, req *pb.BrokerServidorCoord) (*pb.ServidorBrokerCoord, error) {
+	var nuevo_x, nuevo_y, nuevo_z int32
+
 	coordenadas, ok := mapeo_plan_coord[req.Planeta]
 
 	if ok {
@@ -139,13 +175,13 @@ func (s *server) Inf_BroServCoord(ctx context.Context, req *pb.BrokerServidorCoo
 		nuevo_x = coordenadas.coor_x
 		nuevo_y = coordenadas.coor_y
 		nuevo_z = coordenadas.coor_y
-	} else{
+	} else {
 		fmt.Println("creano map")
 		nuevo_x = 0
 		nuevo_y = 0
 		nuevo_z = 0
 	}
-	
+
 	return &pb.ServidorBrokerCoord{
 		X: nuevo_x,
 		Y: nuevo_y,
@@ -153,20 +189,45 @@ func (s *server) Inf_BroServCoord(ctx context.Context, req *pb.BrokerServidorCoo
 	}, nil
 }
 
+func (c *server) InfBroful(ctx context.Context, req *pb.BrokerFulcrum) (*pb.FulcrumBroker, error) {
+	var rebels, cordex, cordey, cordez int32
 
+	info, ok := mapeo_plan_coord[req.Nombreplaneta]
 
-func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.ServidorInformante, error){
-	accion 	:= req.Accion
+	if ok {
+		fmt.Println("Buscando ciudades del planeta")
+		city, rebs := Up_numLei(req.Nombreciudad, req.Nombreplaneta)
+		if city != "error" {
+			rebels = rebs
+			cordex = info.coor_x
+			cordey = info.coor_y
+			cordez = info.coor_z
+		} else {
+			fmt.Println("Si no esta en nuestros archivos es porque no existe")
+
+		}
+
+	}
+	return &pb.FulcrumBroker{
+		X:            cordex,
+		Y:            cordey,
+		Z:            cordez,
+		Rebeldes:     rebels,
+		Nombreserver: conn,
+	}, nil
+
+}
+
+func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.ServidorInformante, error) {
+	accion := req.Accion
 	planeta := req.PlanetaAfectado
-	ciudad	:= req.CiudadAfectada
-	val		:= req.NuevoValor
+	ciudad := req.CiudadAfectada
+	val := req.NuevoValor
 
-	nom 	:= planeta + ".txt"
-	nom2 	:= "registro_" + planeta + ".txt"
-	str 	:= planeta + " " + ciudad + " " + val
-	str2 	:= accion + " " + planeta + " " + ciudad + " " + val
-
-	
+	nom := planeta + ".txt"
+	nom2 := "registro_" + planeta + ".txt"
+	str := planeta + " " + ciudad + " " + val
+	str2 := accion + " " + planeta + " " + ciudad + " " + val
 
 	fmt.Println("Nom: " + nom)
 	fmt.Println("Accion: " + accion)
@@ -174,16 +235,15 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 	fmt.Println("ciudad: " + ciudad)
 	fmt.Println("val: " + val)
 
-	
 	///////////-----Seccion de archivos de planetas-----///////////
-	if accion == "AddCity"{
+	if accion == "AddCity" {
 		//chequear si existe archivo y anidir linea
-		
+
 		if _, err := os.Stat(nom); err == nil {
 			fmt.Println("Archivo existe, creando...")
-			
+
 			append_line_archivo(nom, str)
-		} else if err !=  nil{
+		} else if err != nil {
 			fmt.Println("No se encontro archivo, creando...")
 			crear_archivo(nom)
 			append_line_archivo(nom, str)
@@ -195,27 +255,27 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 		//chequear si existe archivo y anidir linea
 		if _, err := os.Stat(nom); err == nil {
 			fmt.Println("Archivo existe")
-			
-			camb_nomb(val,ciudad, nom)
-		} else if err !=  nil{
+
+			camb_nomb(val, ciudad, nom)
+		} else if err != nil {
 			fmt.Println("No se encontro archivo, creando...")
 			crear_archivo(nom)
-			camb_nomb(val,ciudad, nom)
+			camb_nomb(val, ciudad, nom)
 		} else {
 			fmt.Println("Error en el archivo a escribir")
 		}
 
-	} else if accion == "UpdateNumber"{
+	} else if accion == "UpdateNumber" {
 		//chequear si existe archivo y anidir linea
 		str := planeta + " " + ciudad + " " + val
 		if _, err := os.Stat(nom); err == nil {
 			fmt.Println("Archivo existe")
-			
-			Up_num(str,ciudad, nom)
-		} else if err !=  nil{
+
+			Up_num(str, ciudad, nom)
+		} else if err != nil {
 			fmt.Println("No se encontro archivo, creando...")
 			crear_archivo(nom)
-			Up_num(str,ciudad, nom)
+			Up_num(str, ciudad, nom)
 		} else {
 			fmt.Println("Error en el archivo a escribir")
 		}
@@ -224,12 +284,12 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 		//chequear si existe archivo y anidir linea
 		if _, err := os.Stat(nom); err == nil {
 			fmt.Println("Archivo existe")
-			
-			Up_num("",ciudad, nom)
-		} else if err !=  nil{
+
+			Up_num("", ciudad, nom)
+		} else if err != nil {
 			fmt.Println("No se encontro archivo, creando...")
 			crear_archivo(nom)
-			Up_num("",ciudad, nom)
+			Up_num("", ciudad, nom)
 		} else {
 			fmt.Println("Error en el archivo a escribir")
 		}
@@ -240,9 +300,9 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 	///////////-----Seccion de registros de planetas----///////////
 	if _, err := os.Stat(nom2); err == nil {
 		fmt.Println("Archivo existe, creando...")
-		
+
 		append_line_archivo(nom2, str2)
-	} else if err !=  nil{
+	} else if err != nil {
 		fmt.Println("No se encontro archivo, creando...")
 		crear_archivo(nom2)
 		append_line_archivo(nom2, str2)
@@ -263,14 +323,14 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 		nuevo_x := coordenadas.coor_x + c_x
 		nuevo_y := coordenadas.coor_y + c_y
 		nuevo_z := coordenadas.coor_y + c_z
-		mapeo_plan_coord[planeta] = coords{nuevo_x,nuevo_y,nuevo_z}
-	} else{
+		mapeo_plan_coord[planeta] = coords{nuevo_x, nuevo_y, nuevo_z}
+	} else {
 		fmt.Println("creano map")
 		fmt.Println(c_x)
 		fmt.Println(c_y)
 		fmt.Println(c_z)
 
-		mapeo_plan_coord[planeta] = coords{c_x,c_y,c_z}
+		mapeo_plan_coord[planeta] = coords{c_x, c_y, c_z}
 	}
 	// fmt.Println()
 
@@ -284,13 +344,13 @@ func (s *server) InfServ(ctx context.Context, req *pb.InformanteServidor) (*pb.S
 func main() {
 	mapeo_plan_coord = make(map[string]coords)
 
-	listner, err := net.Listen("tcp",conn)
-	
+	listner, err := net.Listen("tcp", conn)
+
 	if err != nil {
-		panic ("No se pudo crear coneccion tcp de servidor serv 1 " + err.Error())
+		panic("No se pudo crear coneccion tcp de servidor serv 1 " + err.Error())
 	}
-	
-	serv := grpc.NewServer() 
+
+	serv := grpc.NewServer()
 	pb.RegisterFuncionesServiceServer(serv, &server{})
 	if err = serv.Serve(listner); err != nil {
 		panic("No se pudo inicializar servidor serv 1 " + err.Error())

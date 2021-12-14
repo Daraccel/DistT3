@@ -42,33 +42,16 @@ func main() {
 	p_name, p_siti := mensaje()
 
 	res, err := serviceClient.InfBrolei(context.Background(), &pb.LeiaBroker{
-		Nombre: p_name,
-		Ciudad: p_siti,
+		Planeta: p_name,
+		Ciudad:  p_siti,
 	})
 	//res, err := serviceClient.InfBro(context.Background(), &pb.InformanteBroker{ //Envía al broker todas las acciones y recibe una respuesta en res donde le llega la direccion	})
 	if err != nil {
 		panic("Error en mensaje de broker " + err.Error())
 	}
 
-	fmt.Println(res.Direccion)
-
-	conn2, err := grpc.Dial("localhost"+res.Direccion, grpc.WithInsecure())
-	if err != nil {
-		panic("No se pudo conectar con el servidor " + err.Error())
-	}
-
-	serviceClient2 := pb.NewFuncionesServiceClient(conn2)
-
-	res2, err2 := serviceClient2.InfServ(context.Background(), &pb.InformanteServidor{
-		Accion:          a1,
-		PlanetaAfectado: a2,
-		CiudadAfectada:  a3,
-		NuevoValor:      a4,
-	})
-
-	if err2 != nil {
-		panic("Error en mensaje de broker " + err2.Error())
-	}
-	fmt.Println(res2)
+	fmt.Println("Rebeldes: ", res.Rebeldes)
+	fmt.Println("Cordenadas: ", res.X, res.Y, res.Z)
+	fmt.Println("Rebeldes: ", res.Sfulcrum)
 
 }

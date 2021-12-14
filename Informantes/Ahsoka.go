@@ -11,8 +11,8 @@ import (
 var conn_brok = "localhost:50051"
 
 type registro struct {
-	coor_x,coor_y,coor_z int32
-	direc string
+	coor_x, coor_y, coor_z int32
+	direc                  string
 }
 
 var mapeo_datos map[string]registro
@@ -40,14 +40,14 @@ func menu() (string, string, string, string, int) {
 		correr = 2
 	}
 
-	if correr < 2{
+	if correr < 2 {
 		fmt.Println("Ingrese nombre de planeta:")
 		fmt.Scan(&accion_str2)
-		
+
 		fmt.Println("Ingrese nombre de ciudad:")
 		fmt.Scan(&accion_str3)
 
-		if accion_int == 4{
+		if accion_int == 4 {
 			accion_str4 = "0"
 		} else {
 			fmt.Println("Ingrese nuevo valor:")
@@ -58,21 +58,21 @@ func menu() (string, string, string, string, int) {
 }
 
 func main() {
-	var valX,valY,valZ int32
-	var a1,a2,a3,a4 string
+	var valX, valY, valZ int32
+	var a1, a2, a3, a4 string
 
-	mapeo_datos= make(map[string]registro)
+	mapeo_datos = make(map[string]registro)
 
 	var correr int = 1
 
 	for correr < 2 {
 		conn1, err := grpc.Dial(conn_brok, grpc.WithInsecure())
-		if err!= nil {
+		if err != nil {
 			panic("No se pudo conectar con el servidor " + err.Error())
 		}
 
 		serviceClient := pb.NewFuncionesServiceClient(conn1)
-		a1,a2,a3,a4,correr = menu()
+		a1, a2, a3, a4, correr = menu()
 
 		if correr < 2 {
 			fmt.Println("correr es true")
@@ -87,46 +87,43 @@ func main() {
 				valZ = 0
 			}
 
-			res,err := serviceClient.InfBro(context.Background(), &pb.InformanteBroker{
-				Accion:				a1,
-				PlanetaAfectado:	a2,
-				CiudadAfectada:		a3,
-				NuevoValor:			a4,
-				X:					valX,
-				Y:					valY,
-				Z:					valZ,
+			res, err := serviceClient.InfBro(context.Background(), &pb.InformanteBroker{
+				Accion:          a1,
+				PlanetaAfectado: a2,
+				CiudadAfectada:  a3,
+				NuevoValor:      a4,
+				X:               valX,
+				Y:               valY,
+				Z:               valZ,
 			})
 
-			if err!= nil {
+			if err != nil {
 				panic("Error en mensaje de broker " + err.Error())
 			}
 
 			fmt.Println(res.Direccion)
 
-
-
-
-			conn2, err := grpc.Dial("localhost" + res.Direccion, grpc.WithInsecure())
-			if err!= nil {
+			conn2, err := grpc.Dial("localhost"+res.Direccion, grpc.WithInsecure())
+			if err != nil {
 				panic("No se pudo conectar con el servidor " + err.Error())
 			}
 
 			serviceClient2 := pb.NewFuncionesServiceClient(conn2)
 
-			res2,err2 := serviceClient2.InfServ(context.Background(), &pb.InformanteServidor{
-				Accion:				a1,
-				PlanetaAfectado:	a2,
-				CiudadAfectada:		a3,
-				NuevoValor:			a4,
+			res2, err2 := serviceClient2.InfServ(context.Background(), &pb.InformanteServidor{
+				Accion:          a1,
+				PlanetaAfectado: a2,
+				CiudadAfectada:  a3,
+				NuevoValor:      a4,
 			})
 
-			if err2!= nil {
+			if err2 != nil {
 				panic("Error en mensaje de broker " + err2.Error())
 			}
 			fmt.Println(res2)
 
-			mapeo_datos[a2] = registro{res2.X,res2.Y,res2.Z,res.Direccion}
-			
+			mapeo_datos[a2] = registro{res2.X, res2.Y, res2.Z, res.Direccion}
+
 		}
-	}		
+	}
 }

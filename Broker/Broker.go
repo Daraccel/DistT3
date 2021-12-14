@@ -75,8 +75,8 @@ func con_serv(planet string, dir string) (int32, int32, int32) {
 }
 
 //Conexion fulcrum broker desde leia      //retorna rebeldes, reloj vectorial, serverName
-func con_servB(planet string, ciudad string) (int32, int32, int32, int32, string) {
-	conn1, err := grpc.Dial(ciudad, grpc.WithInsecure())
+func con_servB(planet string, ciudad string, dir string) (int32, int32, int32, int32, string) {
+	conn1, err := grpc.Dial(dir, grpc.WithInsecure())
 	if err != nil {
 		panic("Fallo en la conexion con el server, esto debe ser Obra del Imperio" + err.Error())
 	}
@@ -98,18 +98,18 @@ func (s *server) InfBrolei(ctx context.Context, req *pb.LeiaBroker) (*pb.BrokerL
 	map_planet = make(map[int]infoplanet)
 	cont := 0
 
-	rbls, x1, y1, z1, sername := con_servB(req.Planeta, req.Ciudad)
+	rbls, x1, y1, z1, sername := con_servB(req.Planeta, req.Ciudad, connS1)
 	if (x1 != 0) && (y1 != 0) && (z1 != 0) {
 		map_planet[cont] = infoplanet{rbls, x1, y1, z1, sername}
 		cont++
 	}
 
-	rbls, x2, y2, z2, sername := con_servB(req.Planeta, req.Ciudad)
+	rbls, x2, y2, z2, sername := con_servB(req.Planeta, req.Ciudad, connS2)
 	if (x2 != 0) && (y2 != 0) && (z2 != 0) {
 		map_planet[cont] = infoplanet{rbls, x2, y2, z2, sername}
 		cont++
 	}
-	rbls, x3, y3, z3, sername := con_servB(req.Planeta, req.Ciudad)
+	rbls, x3, y3, z3, sername := con_servB(req.Planeta, req.Ciudad, connS3)
 	if (x3 != 0) && (y3 != 0) && (z3 != 0) {
 		map_planet[cont] = infoplanet{rbls, x3, y3, z3, sername}
 		cont++

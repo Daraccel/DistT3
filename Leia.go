@@ -14,7 +14,7 @@ func mensaje() (string, string) {
 	var n_planeta string
 	var n_ciudad string
 
-	fmt.Println("Ingrese numero de planeta. \n ")
+	fmt.Println("Ingrese nombre de planeta. \n ")
 	fmt.Scan(&n_planeta)
 	fmt.Println("Ingrese numero de planeta. \n ")
 	fmt.Scan(&n_ciudad)

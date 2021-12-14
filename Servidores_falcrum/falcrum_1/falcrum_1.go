@@ -108,7 +108,7 @@ func Up_num(linea_nueva string, buscar string, nombre string) {
 
 //                   ciudad        planeta
 func Up_numLei(buscar string, nombre string) (string, int32) {
-	input, err := ioutil.ReadFile(nombre)
+	input, err := ioutil.ReadFile(nombre + ".txt")
 	if err != nil {
 		fmt.Println(err)
 		return "error", 0
@@ -134,7 +134,7 @@ func Up_numLei(buscar string, nombre string) (string, int32) {
 }
 
 func camb_nomb(val string, buscar string, nombre string) {
-	input, err := ioutil.ReadFile(nombre + ".txt")
+	input, err := ioutil.ReadFile(nombre)
 	if err != nil {
 		fmt.Println(err)
 		return

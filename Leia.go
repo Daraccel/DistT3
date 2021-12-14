@@ -16,7 +16,7 @@ func mensaje() (string, string) {
 
 	fmt.Println("Ingrese nombre de planeta. \n ")
 	fmt.Scan(&n_planeta)
-	fmt.Println("Ingrese numero de planeta. \n ")
+	fmt.Println("Ingrese nombre de ciudad. \n ")
 	fmt.Scan(&n_ciudad)
 
 	return n_planeta, n_ciudad
@@ -30,7 +30,7 @@ type infoplanet struct {
 
 func main() {
 	//nombreCIudad : rebeldes, reloj vectorial, server de la info
-	visits := make(map[string]infoplanet)
+	//	visits := make(map[string]infoplanet)
 
 	conn1, err := grpc.Dial(conn_brok, grpc.WithInsecure()) //Conecta con el server
 	if err != nil {
@@ -52,6 +52,6 @@ func main() {
 
 	fmt.Println("Rebeldes: ", res.Rebeldes)
 	fmt.Println("Cordenadas: ", res.X, res.Y, res.Z)
-	fmt.Println("Rebeldes: ", res.Sfulcrum)
+	fmt.Println("Servidor usado: ", res.Sfulcrum)
 
 }

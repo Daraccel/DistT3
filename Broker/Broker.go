@@ -99,18 +99,18 @@ func (s *server) InfBrolei(ctx context.Context, req *pb.LeiaBroker) (*pb.BrokerL
 	cont := 0
 
 	rbls, x1, y1, z1, sername := con_servB(req.Planeta, req.Ciudad, connS1)
-	if (x1 != 0) && (y1 != 0) && (z1 != 0) {
+	if (x1 != 0) || (y1 != 0) || (z1 != 0) {
 		map_planet[cont] = infoplanet{rbls, x1, y1, z1, sername}
 		cont++
 	}
 
 	rbls, x2, y2, z2, sername := con_servB(req.Planeta, req.Ciudad, connS2)
-	if (x2 != 0) && (y2 != 0) && (z2 != 0) {
+	if (x2 != 0) || (y2 != 0) || (z2 != 0) {
 		map_planet[cont] = infoplanet{rbls, x2, y2, z2, sername}
 		cont++
 	}
 	rbls, x3, y3, z3, sername := con_servB(req.Planeta, req.Ciudad, connS3)
-	if (x3 != 0) && (y3 != 0) && (z3 != 0) {
+	if (x3 != 0) || (y3 != 0) || (z3 != 0) {
 		map_planet[cont] = infoplanet{rbls, x3, y3, z3, sername}
 		cont++
 	}

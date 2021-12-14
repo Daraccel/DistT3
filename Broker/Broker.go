@@ -117,7 +117,7 @@ func (s *server) InfBrolei(ctx context.Context, req *pb.LeiaBroker) (*pb.BrokerL
 	onlyOnce.Do(func() {
 		rand.Seed(time.Now().UnixNano())
 	})
-	eleccion := rand.Intn(len(map_random))
+	eleccion := rand.Intn(len(map_planet))
 
 	return &pb.BrokerLeia{
 
